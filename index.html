@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Just Checkup</title>
+  <meta name="description" content="Track doctor appointments and recurring checkups. Works offline, data stays on your device.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#FBF5E9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1B1814" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Checkup">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <script type="module" src="ui/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#app">Skip to content</a>
+  <main id="app" tabindex="-1">
+    <p class="loading">Loading…</p>
+  </main>
+  <nav class="bottom-bar" aria-label="Main">
+    <a class="bottom-bar__link" href="#/" data-route="calendar">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><rect x="3.5" y="5" width="17" height="15.5" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="bottom-bar__label">Calendar</span>
+    </a>
+    <a class="bottom-bar__add" href="#/new" aria-label="Add appointment or plan">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="28" height="28"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    </a>
+    <a class="bottom-bar__link" href="#/settings" data-route="settings">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8M18.5 18.5l-1.8-1.8M7.3 7.3 5.5 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="bottom-bar__label">Settings</span>
+    </a>
+  </nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">Just Checkup needs JavaScript to run.</p></noscript>
+</body>
+</html>

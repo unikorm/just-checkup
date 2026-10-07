@@ -1,0 +1,110 @@
+/*
+ * Design tokens: every color, radius, spacing step and font lives here.
+ * Light is the default; dark mode overrides colors only.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces & text */
+  --color-bg: #fbf5e9;            /* cream */
+  --color-surface: #fffdf8;
+  --color-surface-sunken: #f3ead8;
+  --color-ink: #1f1b16;           /* text + outlines */
+  --color-ink-muted: #5c5348;
+  --color-outline: #1f1b16;
+
+  /* Pastel card colors. Text on cards is always --color-card-ink. */
+  --color-mustard: #f6d27a;
+  --color-coral: #f7a98b;
+  --color-mint: #a9dec4;
+  --color-lavender: #cdbef2;
+  --color-card-ink: #1f1b16;
+  --color-card-ink-muted: #433b31;
+  --color-card-outline: #1f1b16;
+  --color-card-danger: #741a0e;   /* "overdue" text on pastel cards */
+
+  /* Accents & states */
+  --color-pill-bg: #1f1b16;       /* selected day, bottom bar */
+  --color-pill-fg: #fbf5e9;
+  --color-accent: #f6d27a;        /* "+" button */
+  --color-due-marker: #c2410c;    /* due-date diamond, >= 3:1 on surfaces */
+  --color-danger: #a1281b;
+  --color-danger-bg: #fbe1db;
+  --color-success: #1d6b3a;
+  --color-focus: #1f1b16;
+  --color-focus-halo: #fbf5e9;
+  --color-backdrop: rgb(31 27 22 / 0.45);
+
+  /* Radii */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+
+  /* Lines & shadows */
+  --border-width: 1.5px;
+  --border: var(--border-width) solid var(--color-outline);
+  --card-border: var(--border-width) solid var(--color-card-outline);
+  --shadow-pop: 3px 4px 0 var(--color-outline);
+  --shadow-float: 0 10px 30px rgb(31 27 22 / 0.18);
+
+  /* Type */
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", "Quicksand", "Varela Round", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-body: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-size-xs: 0.78rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.6rem;
+  --font-size-2xl: 2.1rem;
+  --font-weight-bold: 800;
+
+  /* Layout */
+  --content-max: 640px;
+  --content-max-wide: 1040px;
+  --bottom-bar-height: 68px;
+  --tap-min: 44px;
+  --duration-fast: 140ms;
+  --duration-med: 240ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1b1814;
+    --color-surface: #26221c;
+    --color-surface-sunken: #14120f;
+    --color-ink: #f6eedd;
+    --color-ink-muted: #c7bba8;
+    --color-outline: #f6eedd;
+
+    --color-mustard: #e8c368;
+    --color-coral: #ec9b7e;
+    --color-mint: #93d0b3;
+    --color-lavender: #baa8ea;
+    --color-card-outline: #0e0c0a;
+
+    --color-pill-bg: #f6eedd;
+    --color-pill-fg: #1b1814;
+    --color-accent: #e8c368;
+    --color-due-marker: #f7a98b;
+    --color-danger: #ff9c8a;
+    --color-danger-bg: #3b1c16;
+    --color-success: #8fdcaa;
+    --color-focus: #f6eedd;
+    --color-focus-halo: #1b1814;
+    --color-backdrop: rgb(0 0 0 / 0.6);
+
+    --shadow-pop: 3px 4px 0 #0e0c0a;
+    --shadow-float: 0 10px 30px rgb(0 0 0 / 0.5);
+  }
+}
