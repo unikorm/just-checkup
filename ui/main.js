@@ -13,6 +13,13 @@ import { calendarScreen } from './screens/calendar.js';
 import { editScreen } from './screens/edit.js';
 import { settingsScreen } from './screens/settings.js';
 import { h } from './dom.js';
+import { createReminderScheduler } from '../reminders/scheduler.js';
+import { createBrowserNotifier } from '../reminders/notifier.js';
+import { allReminders } from '../reminders/compute.js';
+import { summarizePlans } from '../domain/plan.js';
+import { todayLocal } from '../domain/dates.js';
+import { reminderMessage } from './reminder-text.js';
+import { registerIcsAction } from './ics-action.js';
 
 /** @typedef {import('./context.js').AppContext} AppContext */
 /** @typedef {import('./context.js').Screen} Screen */
@@ -51,6 +58,18 @@ async function start() {
     if (change.scope !== 'meta') scheduleReload();
   });
 
+  const scheduler = createReminderScheduler({
+    store,
+    notifier: createBrowserNotifier(),
+    now: () => systemClock.now(),
+    getReminders: () => {
+      const { plans, appointments } = state.get();
+      return allReminders(appointments, summarizePlans(plans, appointments, todayLocal(systemClock.now())));
+    },
+    toMessage: (reminder) => reminderMessage(reminder, systemClock.now()),
+  });
+  registerIcsAction();
+
   /** @type {Screen|null} */
   let current = null;
   let firstRender = true;
@@ -62,6 +81,7 @@ async function start() {
     store,
     now: () => systemClock.now(),
     toast: showToast,
+    reminders: { check: () => scheduler.check() },
     refresh: async () => {
       await scheduleReload();
       render({ keepFocus: true });
@@ -112,7 +132,10 @@ async function start() {
     firstRender = false;
   }
 
-  state.subscribe((data) => current?.update?.(data));
+  state.subscribe((data) => {
+    current?.update?.(data);
+    scheduler.check();
+  });
   window.addEventListener('hashchange', async () => {
     // Render with fresh data when navigating right after a save.
     if (reloading) await reloading;
@@ -121,6 +144,7 @@ async function start() {
 
   await reload();
   render();
+  scheduler.start();
   requestPersistenceOnFirstRun(store).catch(() => {});
 
   if (store.kind === 'memory') {

@@ -3,7 +3,7 @@
  * Display formatting. Uses the browser locale via Intl; Date objects are
  * only created through domain/dates.js so no UTC parsing slips in.
  */
-import { localDateTimeToDate, localDateToDate } from '../domain/dates.js';
+import { addDays, localDateTimeToDate, localDateToDate } from '../domain/dates.js';
 
 /** @typedef {import('../domain/types.js').LocalDate} LocalDate */
 /** @typedef {import('../domain/types.js').LocalDateTime} LocalDateTime */
@@ -57,6 +57,18 @@ export const formatTime = (dateTime) => fmt({ hour: 'numeric', minute: '2-digit'
 /** @param {LocalDateTime} dateTime */
 export const formatDateTime = (dateTime) =>
   fmt({ weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }).format(localDateTimeToDate(dateTime));
+
+/**
+ * "Today 15:00", "Tomorrow 9:30", otherwise "Fri, 9 Oct, 8:30".
+ * @param {LocalDateTime} dateTime
+ * @param {LocalDate} today
+ */
+export function formatWhen(dateTime, today) {
+  const date = dateTime.slice(0, 10);
+  if (date === today) return `Today ${formatTime(dateTime)}`;
+  if (date === addDays(today, 1)) return `Tomorrow ${formatTime(dateTime)}`;
+  return formatDateTime(dateTime);
+}
 
 /**
  * @param {number} n

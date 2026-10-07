@@ -31,6 +31,8 @@ import {
 } from '../../domain/dates.js';
 import { summarizePlans } from '../../domain/plan.js';
 import { appointmentsOn, dueToBook, markersByDate, unconfirmedAppointments, upcomingAppointments } from '../../domain/calendar.js';
+import { bannerItems } from '../../reminders/compute.js';
+import { reminderBanner } from '../components/reminder-banner.js';
 
 /** @typedef {import('../context.js').AppContext} AppContext */
 /** @typedef {import('../context.js').Screen} Screen */
@@ -48,6 +50,8 @@ const view = {
   mode: readViewMode(),
   /** @type {LocalDate|null} */
   selected: null,
+  /** Hidden until the app is opened again. */
+  bannerDismissed: false,
 };
 
 /** @returns {ViewMode} */
@@ -140,9 +144,21 @@ export function calendarScreen(ctx) {
       dueSection(dueToBook(summaries), today),
     );
 
+    const banner = view.bannerDismissed
+      ? null
+      : reminderBanner(ctx, bannerItems({ appointments, summaries, now }), {
+          hasReminders: appointments.some((a) => a.reminderOffsets.length > 0) || plans.some((p) => p.remindBeforeDays !== null),
+          onDismiss: () => {
+            view.bannerDismissed = true;
+            render();
+            /** @type {HTMLElement|null} */ (el.querySelector('h1'))?.focus();
+          },
+        });
+
     const isEmpty = plans.length === 0 && appointments.length === 0;
     el.replaceChildren(
       header,
+      ...(banner ? [banner] : []),
       ...(isEmpty ? [welcomeCard()] : []),
       h('div', { class: 'cal-layout' }, h('div', { class: 'cal-layout__main' }, calendarPanel, selectedDay), h('div', { class: 'cal-layout__side' }, lists)),
     );

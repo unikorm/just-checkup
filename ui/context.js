@@ -22,6 +22,7 @@
  * @property {() => Date} now
  * @property {() => Promise<void>} refresh   reload data and re-render the current route
  * @property {(message: string) => void} toast
+ * @property {{ check: () => Promise<void> }} reminders  re-run the reminder check now
  */
 
 export {};
