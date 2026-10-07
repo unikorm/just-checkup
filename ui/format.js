@@ -45,6 +45,9 @@ export const formatDate = (date) => fmt({ day: 'numeric', month: 'short', year: 
 /** "October 2026" @param {LocalDate} date */
 export const formatMonthYear = (date) => fmt({ month: 'long', year: 'numeric' }).format(localDateToDate(date));
 
+/** "Oct" @param {LocalDate} date */
+export const formatMonthShort = (date) => fmt({ month: 'short' }).format(localDateToDate(date));
+
 /** "Mon" @param {LocalDate} date */
 export const formatWeekdayShort = (date) => fmt({ weekday: 'short' }).format(localDateToDate(date));
 

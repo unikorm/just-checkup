@@ -685,3 +685,313 @@
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* ==========================================================================
+   Calendar screen
+   ========================================================================== */
+.cal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.cal-header h1:focus {
+  outline: none;
+}
+
+.segmented--small {
+  min-width: 170px;
+}
+
+.segmented--small label {
+  min-height: 34px;
+  font-size: var(--font-size-sm);
+}
+
+.cal-panel {
+  padding: var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.cal-nav .icon-btn {
+  width: 40px;
+  height: 40px;
+}
+
+.cal-nav__label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  text-align: center;
+}
+
+/* A day cell. Shared by the week strip and the month grid. */
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-2) 0;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-ink);
+  font-weight: 700;
+  touch-action: manipulation;
+  transition: background-color var(--duration-fast);
+}
+
+.day:hover {
+  background: var(--color-surface-sunken);
+}
+
+.day__dow {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.day__num {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.day.is-today {
+  border-color: var(--color-outline);
+}
+
+.day.is-outside {
+  opacity: 0.45;
+}
+
+/* Selected day: the dark pill. */
+.day[aria-pressed="true"] {
+  background: var(--color-pill-bg);
+  color: var(--color-pill-fg);
+  border-color: var(--color-pill-bg);
+  opacity: 1;
+}
+
+.day[aria-pressed="true"] .day__dow {
+  color: var(--color-pill-fg);
+  opacity: 0.8;
+}
+
+.day__marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 10px;
+}
+
+/* Appointment = filled dot; due date = hollow diamond. Shape, not just color,
+   tells them apart. */
+.mark {
+  display: inline-block;
+  flex: none;
+}
+
+.mark--appt {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.mark--due {
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--color-due-marker);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.day[aria-pressed="true"] .mark--due {
+  border-color: currentColor;
+}
+
+.week-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
+  touch-action: pan-y;
+}
+
+.week-strip .day {
+  min-height: 84px;
+  padding: var(--space-3) 0 var(--space-2);
+  gap: var(--space-1);
+}
+
+.month-grid {
+  touch-action: pan-y;
+}
+
+.month-grid__dow,
+.month-grid__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.month-grid__dow {
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-ink-muted);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.month-grid .day {
+  min-height: 52px;
+  border-radius: var(--radius-sm);
+  padding-top: var(--space-1);
+}
+
+.month-grid .day__num {
+  font-size: var(--font-size-md);
+}
+
+.day-panel {
+  margin-top: var(--space-5);
+}
+
+.due-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) dashed var(--color-outline);
+  border-radius: var(--radius-md);
+}
+
+.welcome {
+  margin-bottom: var(--space-5);
+}
+
+/* Appointment card */
+.appt-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.appt-card.is-cancelled .card__title {
+  text-decoration: line-through;
+}
+
+.date-block {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  padding: var(--space-2) 0;
+  border: var(--card-border);
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 0.45);
+  line-height: 1;
+}
+
+.date-block__day {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xl);
+}
+
+.date-block__month {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.appt-card__body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.appt-card__body .card__title {
+  overflow-wrap: anywhere;
+}
+
+.appt-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.card__meta svg {
+  display: inline-block;
+  vertical-align: -2px;
+}
+
+.appt-card__status {
+  flex: none;
+}
+
+/* Plan card ("Due to book") */
+.plan-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.plan-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.plan-card.is-overdue {
+  border-width: 2.5px;
+}
+
+/* Two columns on wide screens: calendar left, lists right. */
+@media (min-width: 900px) {
+  .cal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .cal-layout__main {
+    position: sticky;
+    top: var(--space-5);
+  }
+
+  .cal-lists > .section:first-child {
+    margin-top: 0;
+  }
+}

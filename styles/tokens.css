@@ -26,6 +26,7 @@
   --color-pill-bg: #1f1b16;       /* selected day, bottom bar */
   --color-pill-fg: #fbf5e9;
   --color-accent: #f6d27a;        /* "+" button */
+  --color-due-marker: #c2410c;    /* due-date diamond, >= 3:1 on surfaces */
   --color-danger: #a1281b;
   --color-danger-bg: #fbe1db;
   --color-success: #1d6b3a;
@@ -94,6 +95,7 @@
     --color-pill-bg: #f6eedd;
     --color-pill-fg: #1b1814;
     --color-accent: #e8c368;
+    --color-due-marker: #f7a98b;
     --color-danger: #ff9c8a;
     --color-danger-bg: #3b1c16;
     --color-success: #8fdcaa;
