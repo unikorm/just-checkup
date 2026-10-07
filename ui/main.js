@@ -20,6 +20,7 @@ import { summarizePlans } from '../domain/plan.js';
 import { todayLocal } from '../domain/dates.js';
 import { reminderMessage } from './reminder-text.js';
 import { registerIcsAction } from './ics-action.js';
+import { registerServiceWorker } from './pwa.js';
 
 /** @typedef {import('./context.js').AppContext} AppContext */
 /** @typedef {import('./context.js').Screen} Screen */
@@ -145,6 +146,7 @@ async function start() {
   await reload();
   render();
   scheduler.start();
+  registerServiceWorker();
   requestPersistenceOnFirstRun(store).catch(() => {});
 
   if (store.kind === 'memory') {

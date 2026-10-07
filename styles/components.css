@@ -333,6 +333,7 @@
    ========================================================================== */
 .form {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 
@@ -380,12 +381,13 @@
 
 .inline-inputs {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
 }
 
 .inline-inputs > * {
-  flex: 1;
+  flex: 1 1 120px;
   min-width: 0;
 }
 
@@ -1065,7 +1067,7 @@
 }
 
 .banner__item--overdue .banner__when {
-  color: #8a1f12;
+  color: var(--color-card-danger);
   font-weight: 800;
 }
 
@@ -1095,4 +1097,25 @@
 .settings-section__body {
   display: grid;
   gap: var(--space-3);
+}
+
+/* ==========================================================================
+   Update bar (new service worker waiting)
+   ========================================================================== */
+.update-bar {
+  position: fixed;
+  top: calc(var(--space-3) + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5);
+  border-radius: var(--radius-pill);
+  background: var(--color-pill-bg);
+  color: var(--color-pill-fg);
+  font-weight: 700;
+  box-shadow: var(--shadow-float);
+  white-space: nowrap;
 }

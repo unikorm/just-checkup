@@ -12,6 +12,7 @@ import { SCHEMA_VERSION } from '../../domain/snapshot.js';
 import { META_KEYS } from '../../storage/store.js';
 import { getPersistenceState, getStorageEstimate } from '../../storage/persist.js';
 import { notificationPermission } from '../../reminders/permission.js';
+import { canInstall, isStandalone, onInstallAvailable, promptInstall } from '../pwa.js';
 
 /** @typedef {import('../context.js').AppContext} AppContext */
 /** @typedef {import('../context.js').Screen} Screen */
@@ -26,6 +27,7 @@ export function settingsScreen(ctx) {
   const backupStatus = h('p', { class: 'field__hint' }, '…');
   const storageStatus = h('p', { class: 'field__hint' }, '…');
   const notificationsSlot = h('div');
+  const installSlot = h('div');
 
   const fileId = uid('import-file');
   const fileInput = h('input', {
@@ -57,6 +59,8 @@ export function settingsScreen(ctx) {
     ),
 
     section('Notifications', notificationsSlot),
+
+    isStandalone() ? null : section('Install', installSlot),
 
     section(
       'Storage',
@@ -122,7 +126,23 @@ export function settingsScreen(ctx) {
     storageStatus.textContent = lines.join(' ');
   }
 
+  function renderInstall() {
+    installSlot.replaceChildren(
+      h('p', null, 'Installing puts Just Checkup on your home screen, makes it work offline like an app, and helps the browser keep your data.'),
+      canInstall()
+        ? h('div', { class: 'button-row', style: 'margin-top: var(--space-3)' },
+            h('button', { type: 'button', class: 'btn', onclick: async () => {
+              if (await promptInstall()) ctx.toast('Installed');
+              renderInstall();
+            } }, 'Install app'))
+        : h('p', { class: 'field__hint', style: 'margin-top: var(--space-3)' },
+            'On iPhone/iPad: tap Share, then “Add to Home Screen”. On Android or desktop Chrome/Edge: use “Install app” in the browser menu.'),
+    );
+  }
+  const offInstall = onInstallAvailable(renderInstall);
+
   renderNotifications();
+  renderInstall();
   refreshStatus();
 
   return {
@@ -131,6 +151,7 @@ export function settingsScreen(ctx) {
     update: () => {
       refreshStatus();
     },
+    destroy: offInstall,
   };
 }
 

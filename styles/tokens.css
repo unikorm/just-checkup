@@ -19,8 +19,9 @@
   --color-mint: #a9dec4;
   --color-lavender: #cdbef2;
   --color-card-ink: #1f1b16;
-  --color-card-ink-muted: #4a4238;
+  --color-card-ink-muted: #433b31;
   --color-card-outline: #1f1b16;
+  --color-card-danger: #741a0e;   /* "overdue" text on pastel cards */
 
   /* Accents & states */
   --color-pill-bg: #1f1b16;       /* selected day, bottom bar */
