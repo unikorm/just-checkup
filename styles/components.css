@@ -1084,3 +1084,15 @@
   padding-top: var(--space-3);
   border-top: 1px dashed rgb(31 27 22 / 0.35);
 }
+
+/* ==========================================================================
+   Settings
+   ========================================================================== */
+.settings-section {
+  margin-bottom: var(--space-4);
+}
+
+.settings-section__body {
+  display: grid;
+  gap: var(--space-3);
+}

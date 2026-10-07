@@ -11,6 +11,9 @@ import { validateAppointmentInput, validatePlanInput } from '../domain/validatio
 import { combineDateTime, isValidLocalDate, nowLocalDateTime, todayLocal } from '../domain/dates.js';
 import { AppointmentStatus, DEFAULT_DURATION_MINUTES } from '../domain/constants.js';
 import { systemClock, randomId, deviceTimeZone } from './clock.js';
+import { createSnapshot, parseSnapshot } from '../domain/snapshot.js';
+import { mergeEntities } from '../domain/merge.js';
+import { META_KEYS } from '../storage/store.js';
 
 /** @typedef {import('../storage/store.js').Store} Store */
 /** @typedef {import('./clock.js').Clock} Clock */
@@ -25,6 +28,15 @@ import { systemClock, randomId, deviceTimeZone } from './clock.js';
  * @typedef {import('../domain/types.js').Result<T>} Result
  */
 /** @typedef {{ kind: 'plan', entity: CheckupPlan } | { kind: 'appointment', entity: Appointment }} FoundEntity */
+/** @typedef {import('../domain/types.js').Snapshot} Snapshot */
+/** @typedef {'merge'|'replace'} ImportMode */
+/**
+ * @typedef {object} ImportSummary
+ * @property {ImportMode} mode
+ * @property {number} added
+ * @property {number} updated
+ * @property {number} unchanged
+ */
 
 /**
  * @param {string} message
@@ -181,6 +193,57 @@ export function createServices({ store, clock = systemClock, newId = randomId, t
       );
       await store.appointments.put(visit);
       return { ok: true, value: visit };
+    },
+
+    /**
+     * Everything, including soft-deleted records, so a restore or a later
+     * sync also knows about deletions.
+     * @returns {Promise<Snapshot>}
+     */
+    async exportSnapshot() {
+      const [plans, appointments] = await Promise.all([
+        store.plans.list({ includeDeleted: true }),
+        store.appointments.list({ includeDeleted: true }),
+      ]);
+      const now = clock.now();
+      await store.meta.set(META_KEYS.lastBackupAt, now.toISOString());
+      return createSnapshot({ plans, appointments }, now);
+    },
+
+    /**
+     * Validate a parsed backup file without importing it (for a preview).
+     * @param {unknown} json
+     */
+    readSnapshot(json) {
+      return parseSnapshot(json);
+    },
+
+    /**
+     * merge: keep whichever version of each record was changed last.
+     * replace: discard local data and use the backup as is.
+     * @param {Snapshot} snapshot  from readSnapshot
+     * @param {ImportMode} mode
+     * @returns {Promise<ImportSummary>}
+     */
+    async importSnapshot(snapshot, mode) {
+      if (mode === 'replace') {
+        await store.replaceAll({ plans: snapshot.plans, appointments: snapshot.appointments });
+        return { mode, added: snapshot.plans.length + snapshot.appointments.length, updated: 0, unchanged: 0 };
+      }
+      const [localPlans, localAppointments] = await Promise.all([
+        store.plans.list({ includeDeleted: true }),
+        store.appointments.list({ includeDeleted: true }),
+      ]);
+      const plans = mergeEntities(localPlans, snapshot.plans);
+      const appointments = mergeEntities(localAppointments, snapshot.appointments);
+      await store.plans.putMany(plans.toWrite);
+      await store.appointments.putMany(appointments.toWrite);
+      return {
+        mode,
+        added: plans.added + appointments.added,
+        updated: plans.updated + appointments.updated,
+        unchanged: plans.unchanged + appointments.unchanged,
+      };
     },
   };
 }

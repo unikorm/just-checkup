@@ -105,3 +105,52 @@ describe('services', () => {
     assert.equal(await svc.find('missing'), null);
   });
 });
+
+describe('export / import', () => {
+  test('export includes tombstones and records the backup time', async () => {
+    const p = await svc.savePlan(planForm, null);
+    const a = await svc.saveAppointment(apptForm, null);
+    assert.ok(p.ok && a.ok);
+    await svc.deleteAppointment(a.value.id);
+    const snap = await svc.exportSnapshot();
+    assert.equal(snap.plans.length, 1);
+    assert.equal(snap.appointments.length, 1);
+    assert.ok(snap.appointments[0].deletedAt);
+    assert.equal(await store.meta.get('lastBackupAt'), now.toISOString());
+  });
+
+  test('round trip into an empty store restores everything', async () => {
+    await svc.savePlan(planForm, null);
+    await svc.saveAppointment(apptForm, null);
+    const json = JSON.parse(JSON.stringify(await svc.exportSnapshot()));
+
+    const other = createServices({ store: createMemoryStore(), clock: { now: () => now } });
+    const parsed = other.readSnapshot(json);
+    assert.ok(parsed.ok);
+    const summary = await other.importSnapshot(parsed.value, 'merge');
+    assert.deepEqual(summary, { mode: 'merge', added: 2, updated: 0, unchanged: 0 });
+    assert.deepEqual(await other.loadAll(), await svc.loadAll());
+  });
+
+  test('merge keeps the newer version of each record', async () => {
+    const p = await svc.savePlan(planForm, null);
+    assert.ok(p.ok);
+    const backup = await svc.exportSnapshot();
+    now = new Date(now.getTime() + 60_000);
+    await svc.savePlan({ ...planForm, name: 'Newer local name' }, p.value.id);
+    const r = await svc.importSnapshot(backup, 'merge');
+    assert.deepEqual([r.added, r.updated, r.unchanged], [0, 0, 1]);
+    assert.equal((await store.plans.get(p.value.id))?.name, 'Newer local name');
+  });
+
+  test('replace discards local data', async () => {
+    const backup = await svc.exportSnapshot(); // empty
+    await svc.savePlan(planForm, null);
+    await svc.importSnapshot(backup, 'replace');
+    assert.deepEqual(await svc.loadAll(), { plans: [], appointments: [] });
+  });
+
+  test('readSnapshot rejects garbage', () => {
+    assert.ok(!svc.readSnapshot({ hello: 'world' }).ok);
+  });
+});
